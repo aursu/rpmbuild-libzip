@@ -1,0 +1,9 @@
+FROM aursu/rpmbuild:7-build
+
+USER root
+RUN yum -y install \
+         bzip2-devel \
+         cmake3 \
+         openssl-devel \
+         zlib-devel \
+    && yum clean all && rm -rf /var/cache/yum

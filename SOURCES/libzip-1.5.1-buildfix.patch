@@ -1,0 +1,31 @@
+diff -rup libzip-1.5.1.orig/CMakeLists.txt libzip-1.5.1/CMakeLists.txt
+--- libzip-1.5.1.orig/CMakeLists.txt	2018-04-11 07:28:08.000000000 +0000
++++ libzip-1.5.1/CMakeLists.txt	2019-02-25 14:29:44.802676000 +0000
+@@ -75,11 +75,11 @@ ADD_CUSTOM_TARGET(dist
+ ADD_CUSTOM_TARGET(distcheck
+   COMMAND chmod -R u+w ${ARCHIVE_NAME} ${ARCHIVE_NAME}-build ${ARCHIVE_NAME}-dest 2>/dev/null || true
+   COMMAND rm -rf ${ARCHIVE_NAME} ${ARCHIVE_NAME}-build ${ARCHIVE_NAME}-dest
+-  COMMAND cmake -E tar xf ${ARCHIVE_NAME}.tar.gz
++  COMMAND ${CMAKE_COMMAND} -E tar xf ${ARCHIVE_NAME}.tar.gz
+   COMMAND chmod -R u-w ${ARCHIVE_NAME}
+   COMMAND mkdir ${ARCHIVE_NAME}-build
+   COMMAND mkdir ${ARCHIVE_NAME}-dest
+-  COMMAND cd ${ARCHIVE_NAME}-build && cmake -DCMAKE_INSTALL_PREFIX=../${ARCHIVE_NAME}-dest ../${ARCHIVE_NAME}
++  COMMAND cd ${ARCHIVE_NAME}-build && ${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=../${ARCHIVE_NAME}-dest ../${ARCHIVE_NAME}
+   COMMAND cd ${ARCHIVE_NAME}-build && make -j4
+   COMMAND cd ${ARCHIVE_NAME}-build && make test
+   COMMAND cd ${ARCHIVE_NAME}-build && make install
+diff -rup libzip-1.5.1.orig/regress/CMakeLists.txt libzip-1.5.1/regress/CMakeLists.txt
+--- libzip-1.5.1.orig/regress/CMakeLists.txt	2018-04-11 07:28:08.000000000 +0000
++++ libzip-1.5.1/regress/CMakeLists.txt	2019-02-25 14:28:56.831745000 +0000
+@@ -49,8 +49,8 @@ ADD_CUSTOM_TARGET(cleanup
+ ADD_CUSTOM_TARGET(testinput
+   ALL
+   VERBATIM
+-  COMMAND cmake -E tar x ${CMAKE_CURRENT_SOURCE_DIR}/manyfiles-zip.zip
+-  COMMAND cmake -E tar x ${CMAKE_CURRENT_SOURCE_DIR}/bigzero-zip.zip
++  COMMAND ${CMAKE_COMMAND} -E tar x ${CMAKE_CURRENT_SOURCE_DIR}/manyfiles-zip.zip
++  COMMAND ${CMAKE_COMMAND} -E tar x ${CMAKE_CURRENT_SOURCE_DIR}/bigzero-zip.zip
+   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/manyfiles-zip.zip ${CMAKE_CURRENT_SOURCE_DIR}/bigzero-zip.zip
+ )
+ 
