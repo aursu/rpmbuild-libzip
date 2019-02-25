@@ -3,7 +3,6 @@
 Name:    libzip
 Version: 1.5.1
 Release: 2%{?dist}
-Epoch:   1
 Summary: C library for reading, creating, and modifying zip archives
 
 License: BSD
@@ -33,6 +32,8 @@ BuildRequires:  perl(Symbol)
 BuildRequires:  perl(UNIVERSAL)
 BuildRequires:  perl(strict)
 BuildRequires:  perl(warnings)
+Epoch:   1
+Provides: %{name}%{?_isa} = %{version}-%{release}
 
 Patch1: libzip-1.5.1-buildfix.patch
 
