@@ -1,0 +1,7 @@
+version: "3.4"
+services:
+  centos7libzipbase:
+    build:
+      context: .
+      dockerfile: Dockerfile.base
+    image: aursu/libzipbuild:7-base
