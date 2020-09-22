@@ -4,4 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.base
-    image: aursu/libzipbuild:7-base
+      args:
+        centos: $OS7
+    image: aursu/libzipbuild:${OS7}-base

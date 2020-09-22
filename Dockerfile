@@ -1,4 +1,5 @@
-FROM aursu/libzipbuild:7-base
+ARG centos=7.8.2003
+FROM aursu/libzipbuild:${centos}-base
 
 COPY SOURCES ${BUILD_TOPDIR}/SOURCES
 COPY SPECS ${BUILD_TOPDIR}/SPECS

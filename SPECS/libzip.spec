@@ -1,7 +1,7 @@
-%global with_tests     0%{!?_without_tests:1}
+%bcond_without tests
 
 Name:    libzip
-Version: 1.5.1
+Version: 1.7.3
 Release: 2%{?dist}
 Summary: C library for reading, creating, and modifying zip archives
 
@@ -13,6 +13,7 @@ BuildRequires:  gcc
 BuildRequires:  zlib-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  openssl-devel
+BuildRequires:  xz-devel
 %if  0%{?fedora}
 BuildRequires:  cmake >= 3.0.2
 %else
@@ -35,7 +36,7 @@ BuildRequires:  perl(warnings)
 Epoch:   1
 Provides: %{name}%{?_isa} = %{version}-%{release}
 
-Patch1: libzip-1.5.1-buildfix.patch
+# Patch1: libzip-1.5.1-buildfix.patch
 
 %description
 libzip is a C library for reading, creating, and modifying zip archives. Files
@@ -70,27 +71,47 @@ The %{name}-tools package provides command line tools split off %{name}:
 # unwanted in package documentation
 rm INSTALL.md
 
-
 %build
 %if 0%{?fedora}
-%cmake .
+%cmake \
 %else
-%cmake3 .
+%cmake3 \
 %endif
+  -DENABLE_COMMONCRYPTO:BOOL=OFF \
+  -DENABLE_GNUTLS:BOOL=OFF \
+  -DENABLE_MBEDTLS:BOOL=OFF \
+  -DENABLE_OPENSSL:BOOL=ON \
+  -DENABLE_WINDOWS_CRYPTO:BOOL=OFF \
+  -DENABLE_BZIP2:BOOL=ON \
+  -DENABLE_LZMA:BOOL=ON \
+  -DBUILD_TOOLS:BOOL=ON \
+  -DBUILD_REGRESS:BOOL=ON \
+  -DBUILD_EXAMPLES:BOOL=OFF \
+  -DBUILD_DOC:BOOL=ON
 
-make %{?_smp_mflags}
-
+%if 0%{?fedora}
+%cmake_build
+%else
+%cmake3_build
+%endif
 
 %install
-make install DESTDIR=%{buildroot} INSTALL='install -p'
-
+%if 0%{?fedora}
+%cmake_install
+%else
+%cmake3_install
+%endif
 
 %check
-%if %{with_tests}
-make check
+%if %{with tests}
+%if 0%{?fedora}
+%ctest
+%else
+%ctest3
+%endif # %if 0%{?fedora}
 %else
 : Test suite disabled
-%endif
+%endif # %if %{with tests}
 
 
 %ldconfig_scriptlets
@@ -112,12 +133,44 @@ make check
 %{_includedir}/zipconf*.h
 %{_libdir}/libzip.so
 %{_libdir}/pkgconfig/libzip.pc
+%{_libdir}/cmake/libzip
 %{_mandir}/man3/libzip*
 %{_mandir}/man3/zip*
 %{_mandir}/man3/ZIP*
 
 
 %changelog
+* Tue Jul 21 2020 Rex Dieter <rdieter@fedoraproject.org> - 1.7.3-2
+- use %%cmake_build, %%cmake_install, %ctest
+
+* Wed Jul 15 2020 Remi Collet <remi@remirepo.net> - 1.7.3-1
+- update to 1.7.3
+- drop patch merged upstream
+
+* Mon Jul 13 2020 Remi Collet <remi@remirepo.net> - 1.7.2-1
+- update to 1.7.2
+- fix installation layout using merged patch from
+  https://github.com/nih-at/libzip/pull/190
+
+* Mon Jun 15 2020 Remi Collet <remi@remirepo.net> - 1.7.1-1
+- update to 1.7.1
+
+* Fri Jun  5 2020 Remi Collet <remi@remirepo.net> - 1.7.0-1
+- update to 1.7.0
+- patch zipconf.h to re-add missing LIBZIP_VERSION_* macros
+
+* Mon Feb  3 2020 Remi Collet <remi@remirepo.net> - 1.6.1-1
+- update to 1.6.1
+
+* Fri Jan 24 2020 Remi Collet <remi@remirepo.net> - 1.6.0-1
+- update to 1.6.0
+- enable lzma support
+
+* Tue Mar 12 2019 Remi Collet <remi@remirepo.net> - 1.5.2-1
+- update to 1.5.2
+- add all explicit cmake options to ensure openssl is used
+  even in local build with other lilbraries available
+
 * Mon Feb 25 2019 Alexander Ursu <alexander.ursu@gmail.com> - 1:1.5.1-2
 - added CentOS 7 support
 
