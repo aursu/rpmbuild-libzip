@@ -1,5 +1,8 @@
 %bcond_without tests
 
+%define _debugsource_template %{nil}
+%define debug_package %{nil}
+
 Name:    libzip
 Version: 1.7.3
 Release: 2%{?dist}
